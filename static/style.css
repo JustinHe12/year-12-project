@@ -6,6 +6,14 @@ body,h1,h2,h3,h4,h5,h6 {font-family: Sofia, sans-serif }
     gap: 2em;
 }
 
+body,h1,h2,h3,h4,h5,h6 {font-family: Sofia, sans-serif }
+
+.three-column{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2em;
+}
+
 img{
     width: 100%;
     

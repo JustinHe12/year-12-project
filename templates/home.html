@@ -1,15 +1,14 @@
-{%extends "layout.html"%}
-{% block body %}
+
+<h1>Please sign in or create an account if you don't already have one</h1>
 <div class = "three-column">
 
-        {% for questions in results %}
-        <a href="{{ url_for('questions', id=questions[0])}}">
-        <div class = "w3-card-4">
-            <h1>{{ questions[2] }} {{questions[3]}}</h1>
-            <img src="{{questions[3]}}" alt = "{{questions[2]}}">
-        </div>
-        </a>
-        {% endfor %}
+
+    
+    <a href="{{url_for('login')}}">Login Page</a><br>
+    <a href="{{url_for('register')}}">Register Page</a><br>
+
+
+
+
 
     </div>
-{% endblock %}
