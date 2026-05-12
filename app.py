@@ -154,13 +154,30 @@ def register():
 
 @app.route("/question/<int:id>")
 def question(id):
+    # Added the WHERE clause and the placeholder (?)
     sql = """
-    SELECT * FROM Questions
-    JOIN WhereFrom ON WhereFrom.Where_ID = Questions.Where_ID
+    SELECT 
+        Questions.Question_ID, 
+        Questions.Question, 
+        Questions.Solution,
+        Questions.Description, 
+        WhereFrom.Name AS SourceName, 
+        Types.Name AS CategoryName
+    FROM Questions
+    JOIN WhereFrom ON Questions.Where_ID = WhereFrom.Where_ID
+    JOIN Types ON Questions.Type_ID = Types.Type_ID
     WHERE Questions.Question_ID = ?;
     """
-    results = query_db(sql, (id,), True)
-    return render_template("question.html", question=results)
+    
+    # Pass the id in a tuple to prevent SQL Injection
+    result = query_db(sql, (id,), one=True)
+    
+    if result is None:
+        return "Question not found", 404
+        
+    return render_template("question.html", question=result)
+
+
 
 
 @app.route('/dashboard', methods = ['GET','POST'])
@@ -174,3 +191,4 @@ def dashboard():
 if __name__ == "__main__":
     app.run(debug=True)
 
+#<h1>DEBUG: {{ question }}</h1>

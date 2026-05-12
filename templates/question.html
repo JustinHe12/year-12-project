@@ -1,10 +1,14 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>placeholder</title>
-</head>
-<body>
-    <p>placeholder</p>
-</body>
-</html>
+{%extends "layout.html"%}
+{% block body %}
+ <div class="two-column">
+    <img src="{{ url_for('static', filename=question[1]) }}" alt="question[7]">
+    <div class = "info">
+      <h1>Source: {{ question[4] }}</h1>
+      <h1>Question Type: {{ question[5] }}</h1>
+      <h1>Description:</h1>
+      <h1>{{ question[3]}}</h1>
+    </div>
+ </div>
+<h1>Solution</h1>
+<img src="{{ url_for('static', filename=question[2]) }}" alt="question[7]">
+{% endblock %}

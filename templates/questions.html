@@ -3,7 +3,6 @@
     <div class = "three-column">
 
       {% for questions in results %}
-        <h1>DEBUG: {{ questions }}</h1>
         <a href="{{ url_for('question', id=questions[0]) }}">
         <div class="w3-card-4">
             <h1>Source: {{ questions[3] }}</h1> 
