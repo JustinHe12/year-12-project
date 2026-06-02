@@ -9,8 +9,11 @@
       <h1>{{ question[3]}}</h1>
     </div>
  </div>
-<h1>Solution</h1>
+<h1>My Solution: </h1>
 <img src="{{ url_for('static', filename=question[2]) }}" alt="question[7]">
 
 <a href="{{url_for('questions')}}">Home</a>
+{{ form.answer}}
+{{ form.submit }}
+{{ correct_answer }}
 {% endblock %}

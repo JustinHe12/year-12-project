@@ -87,6 +87,11 @@ class LoginForm(FlaskForm):
 
 
 
+class AnswerForm(FlaskForm):
+    answer = StringField(validators=[InputRequired(), Length( min=0, max=50)])
+    submit = SubmitField('Answer')
+
+
 @app.route("/")
 #Homepage
 def home():
@@ -102,8 +107,8 @@ def questions():
     Questions.Question_ID, 
     Questions.Question, 
     Questions.Solution, 
-    WhereFrom.Name AS SourceName, 
-    Types.Name AS CategoryName
+    WhereFrom.Name, 
+    Types.Name
     FROM Questions
     JOIN WhereFrom ON Questions.Where_ID = WhereFrom.Where_ID
     JOIN Types ON Questions.Type_ID = Types.Type_ID;
@@ -152,17 +157,55 @@ def register():
 
 
 
-@app.route("/question/<int:id>")
+@app.route("/debug/<int:id>", methods = ['GET', 'POST'])
+def debug(id):
+    correct = ""
+    form = AnswerForm()
+    sql = """
+        SELECT Answer FROM QUESTIONS WHERE QUESTION_ID = ?
+        """
+    result = query_db(sql,(id,), one=True)
+    correct_answer = result[0]
+    if correct_answer == None:
+        correct_answer = "none"
+    if form.validate_on_submit():
+        if form.answer.data == correct_answer:
+            correct = "yes"
+        else:
+            correct = "no"
+
+
+    return render_template("debug.html", correct_answer = correct_answer, correct = correct, form = form)
+
+
+@app.route("/question/<int:id>", methods = ['GET', 'POST'])
 def question(id):
-    # Added the WHERE clause and the placeholder (?)
+    correct = '0'
+    form = AnswerForm()
+    if form.validate_on_submit():
+        sql = """
+        SELECT Answer FROM QUESTIONS WHERE QUESTION_ID = ?
+        """
+        #This is to prevent sql injection
+        result = query_db(sql,(id,), one=True)
+        if result:
+            correct_answer = result[0]
+        else:
+            correct_answer = 'none'
+        if form.answer.data == correct_answer:
+            correct = '1'
+        else:
+            correct = '2'
+    
+    # Added the WHERE clause andp placeholder
     sql = """
     SELECT 
         Questions.Question_ID, 
         Questions.Question, 
         Questions.Solution,
         Questions.Description, 
-        WhereFrom.Name AS SourceName, 
-        Types.Name AS CategoryName
+        WhereFrom.Name, 
+        Types.Name 
     FROM Questions
     JOIN WhereFrom ON Questions.Where_ID = WhereFrom.Where_ID
     JOIN Types ON Questions.Type_ID = Types.Type_ID
@@ -170,12 +213,12 @@ def question(id):
     """
     
     # Pass the id in a tuple to prevent SQL Injection
-    result = query_db(sql, (id,), one=True)
+    results = query_db(sql, (id,), one=True)
     
-    if result is None:
+    if results is None:
         return "Question not found", 404
         
-    return render_template("question.html", question=result)
+    return render_template("question.html", question=results, form = form, correct = correct)
 
 
 
