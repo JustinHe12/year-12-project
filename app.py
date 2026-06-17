@@ -117,6 +117,15 @@ def questions():
     results = cursor.fetchall()
     return render_template("questions.html", results=results)
 
+@app.route('/rough')
+def rough():
+    sql = """
+    SELECT Quesitons.Rough FROM Questions
+    """
+    results = query_db(sql,(id,), one= False)
+    return render_template("rough.html", results = results)
+
+
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
@@ -235,3 +244,4 @@ if __name__ == "__main__":
     app.run(debug=True)
 
 #<h1>DEBUG: {{ question }}</h1>
+

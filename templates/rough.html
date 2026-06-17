@@ -1,0 +1,17 @@
+{%extends "layout.html"%}
+{% block body %}
+    <div class = "three-column">
+
+      {% for questions in results %}
+        <a href="{{ url_for('question', id=questions[0]) }}">
+        <div class="w3-card-4">
+            <h1>Source: {{ questions[0] }}</h1> 
+            
+            <img src="{{ url_for('static', filename=questions[0]) }}" alt="questions[0]">
+                 
+        </div>
+    </a>
+{% endfor %}
+
+    </div>
+{% endblock %}
