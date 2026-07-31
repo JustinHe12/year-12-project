@@ -2,16 +2,16 @@
 {% block body %}
     <div class = "three-column">
 
-      {% for questions in results %}
-        <a href="{{ url_for('question', id=questions[0]) }}">
+      {% for result in results %}
+        <a href="{{ url_for('question', id=result[1]) }}">
         <div class="w3-card-4">
-            <h1>Source: {{ questions[0] }}</h1> 
+            <h1>Source: {{ result[1] }}</h1> 
             
-            <img src="{{ url_for('static', filename=questions[0]) }}" alt="questions[0]">
+            <img src="{{ url_for('static', filename=result[1]) }}" alt="result[1]">
                  
         </div>
     </a>
 {% endfor %}
 
-    </div>
+    </div> 
 {% endblock %}

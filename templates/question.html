@@ -13,7 +13,15 @@
 <img src="{{ url_for('static', filename=question[2]) }}" alt="question[7]">
 
 <a href="{{url_for('questions')}}">Home</a>
-{{ form.answer}}
-{{ form.submit }}
-{{ correct_answer }}
+
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    {{ form.answer.label }}
+    {{ form.answer() }}
+
+    {{ form.submit() }}
+</form>
+{{ correct }}
 {% endblock %}

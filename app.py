@@ -1,4 +1,4 @@
-from flask import Flask, g, render_template, url_for, redirect
+from flask import Flask, g, render_template, url_for, redirect, request
 import sqlite3
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
@@ -24,6 +24,8 @@ def get_db():
     if db is None: #if db is none, it then creates a new connection and stores it inside of g
         db = g._database = sqlite3.connect(DATABASE)
     return db
+
+
 
 @app.teardown_appcontext #This runs automatically when the app context ends
 def close_connection(exception): 
@@ -120,9 +122,9 @@ def questions():
 @app.route('/rough')
 def rough():
     sql = """
-    SELECT Quesitons.Rough FROM Questions
+    SELECT Rough FROM Questions
     """
-    results = query_db(sql,(id,), one= False)
+    results = query_db(sql,(id,), one= True)
     return render_template("rough.html", results = results)
 
 
@@ -177,11 +179,17 @@ def debug(id):
     correct_answer = result[0]
     if correct_answer == None:
         correct_answer = "none"
+    print("Method:", request.method)
+    print("Validate:", form.validate_on_submit())
+    print("Errors:", form.errors)
     if form.validate_on_submit():
+        print("This form is working")
         if form.answer.data == correct_answer:
-            correct = "yes"
+            correct = "correct"
         else:
-            correct = "no"
+            correct = "incorrect"
+    else:
+        print("this is not working")
 
 
     return render_template("debug.html", correct_answer = correct_answer, correct = correct, form = form)
@@ -189,6 +197,7 @@ def debug(id):
 
 @app.route("/question/<int:id>", methods = ['GET', 'POST'])
 def question(id):
+    print("Method:", request.method)
     correct = '0'
     form = AnswerForm()
     if form.validate_on_submit():
@@ -202,9 +211,11 @@ def question(id):
         else:
             correct_answer = 'none'
         if form.answer.data == correct_answer:
-            correct = '1'
+            correct = 'correct'
+            print(correct)
         else:
-            correct = '2'
+            correct = 'incorrect'
+            print(correct)
     
     # Added the WHERE clause andp placeholder
     sql = """
@@ -232,6 +243,7 @@ def question(id):
 
 
 
+
 @app.route('/dashboard', methods = ['GET','POST'])
 @login_required
 def dashboard():
@@ -245,3 +257,27 @@ if __name__ == "__main__":
 
 #<h1>DEBUG: {{ question }}</h1>
 
+"""{%extends "layout.html"%}
+{% block body %}
+ <div class="two-column">
+    <img src="{{ url_for('static', filename=question[1]) }}" alt="question[7]">
+    <div class = "info">
+      <h1>Source: {{ question[4] }}</h1>
+      <h1>Question Type: {{ question[5] }}</h1>
+      <h1>Description:</h1>
+      <h1>{{ question[3]}}</h1>
+    </div>
+ </div>
+<h1>My Solution: </h1>
+<img src="{{ url_for('static', filename=question[2]) }}" alt="question[7]">
+
+<a href="{{url_for('questions')}}">Home</a>
+
+{{ correct_answer }}
+{{ form.answer}}
+{{ form.submit }}
+
+{% endblock %}
+
+
+"""

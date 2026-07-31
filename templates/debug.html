@@ -4,6 +4,10 @@
 <h1> {{correct_answer }} </h1>
 <h1>DEBUG: {{ correct_answer }}</h1>
 <h1> {{ correct }}</h1>
-{{ form.answer}}
-{{ form.submit }}
+<form method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.answer() }}
+
+    {{ form.submit() }}
+</form>
 {% endblock %}
