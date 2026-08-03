@@ -90,7 +90,7 @@ class LoginForm(FlaskForm):
 
 
 class AnswerForm(FlaskForm):
-    answer = StringField(validators=[InputRequired(), Length( min=0, max=50)])
+    answer = StringField(validators=[InputRequired(), Length( min=1, max=12)])
     submit = SubmitField('Answer')
 
 
