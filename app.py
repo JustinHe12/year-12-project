@@ -12,7 +12,7 @@ DATABASE = 'database.db'
 #Creates the app
 app = Flask(__name__)
 bycrypt = Bcrypt(app)
-app.config['SECRET_KEY'] = 'TsISisdsihihsieref'
+app.config['SECRET_KEY'] = 'secretkey123'
 
 
 login_manager = LoginManager() 
@@ -61,13 +61,13 @@ def load_user(user_id):
 
 
 class RegisterForm(FlaskForm):
-    username = StringField(validators=[InputRequired()], render_kw={"placeholder": "Username"})  #the other condition is that it must be between 4 to 20 letters
+    username = StringField(validators=[InputRequired(),Length(min=4, max=8)], render_kw={"placeholder": "Username"})  #the other condition is that it must be between 4 to 20 letters
     
-    password = PasswordField(validators=[InputRequired()], render_kw={"placeholder": "Password"})
+    password = PasswordField(validators=[InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
 
     submit = SubmitField("Register")
 
-    def validate_username(self, username): #Checks whether the username already exixts in the database Users
+    def validate_username(self, username): 
         existing_user = query_db(
             "SELECT * FROM Users WHERE username = ?",
             (username.data,),
@@ -75,12 +75,12 @@ class RegisterForm(FlaskForm):
         )
 
         if existing_user:   
-            raise ValidationError("That username is already taken.")
+            raise ValidationError()
 
 
 class LoginForm(FlaskForm):
     username = StringField(validators=[InputRequired(),Length( #Input required means it must be filled out
-        min=4, max=20)], render_kw={"placeholder": "Username"})  #the other condition is that it must be between 4 to 20 letters
+        min=4, max=8)], render_kw={"placeholder": "Username"})  #the other condition is that it must be between 4 to 20 letters
     
     password = PasswordField(validators=[InputRequired(),Length(
         min=8, max=20)], render_kw={"placeholder": "Password"})
@@ -136,14 +136,24 @@ def login():
         db = get_db()
         cursor = db.cursor()
 
-        cursor.execute("SELECT * FROM Users WHERE username = ?", (int(form.username.data, )))
-        row = cursor.fetchone
+        cursor.execute("SELECT * FROM Users WHERE username = ?", (form.username.data, ))
+        row = cursor.fetchone()
         if row:
-            user = User(id = row['id'], username = row['username'], password = row['password'])
+            user = User(id = row[0], username = row[1], password = row[2])
+            if bycrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                return redirect(url_for('dashboard'))
         else:
             user = None
     
     return render_template('login.html', form = form)
+
+
+@app.route('/dashboard', methods = ['GET','POST'])
+@login_required
+def dashboard():
+    return render_template("dashboard.html")
+
 
 
 @app.route('/register', methods = ['GET', 'POST'])
@@ -239,15 +249,6 @@ def question(id):
         return "Question not found", 404
         
     return render_template("question.html", question=results, form = form, correct = correct)
-
-
-
-
-
-@app.route('/dashboard', methods = ['GET','POST'])
-@login_required
-def dashboard():
-    return render_template("dashboard.html")
 
 
 
