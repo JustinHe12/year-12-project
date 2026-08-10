@@ -51,11 +51,11 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     db = get_db()
-    cursor = db.execute("SELECT * FROM user WHERE id = ?", (int(user_id),))
+    cursor = db.execute("SELECT * FROM Users WHERE id = ?", (int(user_id),))
     row = cursor.fetchone()
     
     if row:
-        return User(id=row['id'], username=row['username'])
+        return User(id=row[0], username=row[1], password=row[2])
     return None
 
 
