@@ -100,6 +100,7 @@ def home():
     return render_template("home.html")
 
 @app.route("/questions")
+@login_required
 #The page that displays all the questions after the user have logged in
 def questions():
     db = get_db()
@@ -213,6 +214,7 @@ def debug(id):
 
 
 @app.route("/question/<int:id>", methods = ['GET', 'POST'])
+@login_required
 def question(id):
     print("Method:", request.method)
     correct = '0'
