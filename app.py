@@ -228,10 +228,18 @@ def question(id):
         if result:
             correct_answer = result[0]
         else:
-            correct_answer = 'none'
+            correct_answer = None
         if form.answer.data == correct_answer:
+            current_user_id = current_user.id
             correct = 'correct'
-            print(correct)
+            db = get_db()
+            cursor = db.cursor()
+            cursor.execute(
+                "INSERT INTO UserProgress (User_ID, Question_ID, Progress) VALUES (?,?,?)", 
+                (current_user_id, id, 1)
+            )
+            db.commit()
+
         else:
             correct = 'incorrect'
             print(correct)
@@ -267,27 +275,3 @@ if __name__ == "__main__":
 
 #<h1>DEBUG: {{ question }}</h1>
 
-"""{%extends "layout.html"%}
-{% block body %}
- <div class="two-column">
-    <img src="{{ url_for('static', filename=question[1]) }}" alt="question[7]">
-    <div class = "info">
-      <h1>Source: {{ question[4] }}</h1>
-      <h1>Question Type: {{ question[5] }}</h1>
-      <h1>Description:</h1>
-      <h1>{{ question[3]}}</h1>
-    </div>
- </div>
-<h1>My Solution: </h1>
-<img src="{{ url_for('static', filename=question[2]) }}" alt="question[7]">
-
-<a href="{{url_for('questions')}}">Home</a>
-
-{{ correct_answer }}
-{{ form.answer}}
-{{ form.submit }}
-
-{% endblock %}
-
-
-"""
