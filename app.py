@@ -217,7 +217,7 @@ def debug(id):
 @login_required
 def question(id):
     print("Method:", request.method)
-    correct = '0'
+    display = ''
     form = AnswerForm()
     if form.validate_on_submit():
         sql = """
@@ -229,20 +229,36 @@ def question(id):
             correct_answer = result[0]
         else:
             correct_answer = None
-        if form.answer.data == correct_answer:
-            current_user_id = current_user.id
-            correct = 'correct'
+        if form.answer.data == correct_answer: #checks if the answer is correct
+            current_user_id = current_user.id #Gets the user's id
+            
             db = get_db()
             cursor = db.cursor()
-            cursor.execute(
-                "INSERT INTO UserProgress (User_ID, Question_ID, Progress) VALUES (?,?,?)", 
-                (current_user_id, id, 1)
-            )
-            db.commit()
+            cursor.execute("SELECT * FROM UserProgress WHERE user_id = ?", (int(current_user_id),))
+            rows = cursor.fetchall() #gets the rows where the user id matches the current user's id
+            if rows: 
+                print(rows)
+                current_tuple = (id, current_user_id, 1) #The tupe including the current user id, question id, and completion
+                solved = False
+                rows = list(rows)
+                for item in rows:
+                    print(f"item {item}")
+                    print(f"current_tuple {current_tuple}")
+                    print(current_tuple)
+                    if item == current_tuple:
+
+                        solved = True
+                if solved == True: 
+                    display = "You have already answered this question"
+                else:
+                    cursor.execute( "INSERT INTO UserProgress (User_ID, Question_ID, Progress) VALUES (?,?,?)", current_tuple)
+                    db.commit()
+                    display = "correct"
+                    
 
         else:
-            correct = 'incorrect'
-            print(correct)
+            display = 'incorrect'
+            print(display)
     
     # Added the WHERE clause andp placeholder
     sql = """
@@ -265,7 +281,7 @@ def question(id):
     if results is None:
         return "Question not found", 404
         
-    return render_template("question.html", question=results, form = form, correct = correct)
+    return render_template("question.html", question=results, form = form, display = display)
 
 
 
