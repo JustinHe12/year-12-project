@@ -160,7 +160,15 @@ def logout():
 @app.route('/dashboard', methods = ['GET','POST'])
 @login_required
 def dashboard():
-    return render_template("dashboard.html")
+    user_score = 0
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM UserProgress WHERE user_id = ?", (int(current_user.id),))
+    rows = cursor.fetchall() 
+    if rows: 
+        for item in rows:
+            user_score = user_score + 5
+    return render_template("dashboard.html", user_score = user_score)
 
 
 
@@ -236,10 +244,10 @@ def question(id):
             cursor = db.cursor()
             cursor.execute("SELECT * FROM UserProgress WHERE user_id = ?", (int(current_user_id),))
             rows = cursor.fetchall() #gets the rows where the user id matches the current user's id
+            solved = False
+            current_tuple = (id, current_user_id, 1)  #The tupe including the current user id, question id, and completion
             if rows: 
                 print(rows)
-                current_tuple = (id, current_user_id, 1) #The tupe including the current user id, question id, and completion
-                solved = False
                 rows = list(rows)
                 for item in rows:
                     print(f"item {item}")
@@ -251,9 +259,13 @@ def question(id):
                 if solved == True: 
                     display = "You have already answered this question"
                 else:
-                    cursor.execute( "INSERT INTO UserProgress (User_ID, Question_ID, Progress) VALUES (?,?,?)", current_tuple)
+                    cursor.execute( "INSERT INTO UserProgress (Question_ID, User_ID, Progress) VALUES (?,?,?)", current_tuple)
                     db.commit()
                     display = "correct"
+            else:
+                cursor.execute( "INSERT INTO UserProgress (Question_ID, User_ID, Progress) VALUES (?,?,?)", current_tuple)
+                db.commit()
+                display = "correct"
                     
 
         else:
