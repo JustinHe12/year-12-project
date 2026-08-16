@@ -226,6 +226,7 @@ def debug(id):
 def question(id):
     print("Method:", request.method)
     display = ''
+    solution = "images/placeholder.png"
     form = AnswerForm()
     if form.validate_on_submit():
         sql = """
@@ -239,7 +240,12 @@ def question(id):
             correct_answer = None
         if form.answer.data == correct_answer: #checks if the answer is correct
             current_user_id = current_user.id #Gets the user's id
-            
+            #Gets the solution only after the right answer is submitted
+            sql = "SELECT Questions.Solution FROM Questions WHERE Questions.Question_ID = ?"
+            solution = query_db(sql, (id,), one=True)
+            if solution:
+                solution = solution[0]
+
             db = get_db()
             cursor = db.cursor()
             cursor.execute("SELECT * FROM UserProgress WHERE user_id = ?", (int(current_user_id),))
@@ -276,8 +282,7 @@ def question(id):
     sql = """
     SELECT 
         Questions.Question_ID, 
-        Questions.Question, 
-        Questions.Solution,
+        Questions.Question,
         Questions.Description, 
         WhereFrom.Name, 
         Types.Name 
@@ -293,7 +298,7 @@ def question(id):
     if results is None:
         return "Question not found", 404
         
-    return render_template("question.html", question=results, form = form, display = display)
+    return render_template("question.html", question=results, form = form, display = display, solution = solution)
 
 
 
