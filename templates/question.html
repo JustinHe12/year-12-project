@@ -3,10 +3,10 @@
  <div class="two-column">
     <img src="{{ url_for('static', filename=question[1]) }}" alt="question[7]">
     <div class = "info">
-      <h1>Source: {{ question[3] }}</h1>
-      <h1>Question Type: {{ question[4] }}</h1>
-      <h1>Description:</h1>
-      <h1>{{ question[2]}}</h1>
+      <h2>Source: <span>{{ question[3] }}</span></h2>
+      <p class="badge">Type: {{ question[4] }}</p>
+      <h3>Description</h3>
+      <p class="description">{{ question[2] }}</p>
     </div> 
  </div>
 
@@ -19,9 +19,16 @@
     {{ form.submit() }}
 </form>
 
-<h1>My Solution: </h1>
-<img src="{{ url_for('static', filename= solution) }}" alt="question[7]">
-{{ display }}
+{% if solution %}
+    <div class="solution-section">
+        <h2>My Solution</h2>
+        <div class="image-card">
+            <img src="{{ url_for('static', filename=solution) }}" alt="Solution Image">
+        </div>
+        <p class="status-msg">{{ display }}</p>
+    </div>
+{% endif %}
+
 
 <a class="ex1" href="{{url_for('questions')}}">Home</a> <br>
 

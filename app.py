@@ -226,7 +226,7 @@ def debug(id):
 def question(id):
     print("Method:", request.method)
     display = ''
-    solution = "images/placeholder.png"
+    solution = ''
     form = AnswerForm()
     if form.validate_on_submit():
         sql = """

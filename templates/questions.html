@@ -1,5 +1,7 @@
 {%extends "layout.html"%}
 {% block body %}
+
+    <a class="ex1" href="{{url_for('dashboard')}}">Home</a> <br>
     <div class = "three-column">
 
       {% for questions in results %}
