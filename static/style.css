@@ -8,10 +8,14 @@ body,h1,h2,h3,h4,h5,h6 {font-family: Sofia, sans-serif }
 
 body,h1,h2,h3,h4,h5,h6 {font-family: Sofia, sans-serif }
 
-.three-column{
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 2em;
+.three-column > * {
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.three-column > *:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
 img{
