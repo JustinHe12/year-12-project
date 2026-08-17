@@ -24,3 +24,13 @@ img{
     grid-template-columns: 1fr 1fr;
     gap: 3em;
 }
+
+.ex1,
+.ex1:visited {
+    color: black;
+}
+
+.ex1:hover,
+.ex1:active {
+    color: rgb(0, 119, 255);
+}
