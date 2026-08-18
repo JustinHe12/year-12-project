@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-</head>
-<body>
+{%extends "layout.html"%}
+{% block body %}
     <h1>Login Page</h1>
 
     <form method="POST" action="">
@@ -18,5 +12,4 @@
     <a class="ex1" href="{{url_for('register')}}">Don't have an account? Sign Up</a> <br>
     <a class="ex1" href="{{url_for('home')}}">Home</a>
     
-</body>
-</html>
+{% endblock %}

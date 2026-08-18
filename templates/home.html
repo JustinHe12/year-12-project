@@ -1,17 +1,10 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homepage</title>
-</head>
-<body>
+{%extends "layout.html"%}
+{% block body %}
     <h1>Please sign in or create an account if you don't already have one</h1>
-<div class = "three-column">
 
-    
     <a class="ex1" href="{{url_for('login')}}">Login Page</a><br>
     <a class="ex1" href="{{url_for('register')}}">Register Page</a><br>
 
-</body>
-</html>
+{% endblock %}
+
 

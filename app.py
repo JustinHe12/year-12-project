@@ -19,6 +19,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
+
 def get_db():
     db = getattr(g, '_database', None) #This line sets g._database to none if it dosen't already exist
     if db is None: #if db is none, it then creates a new connection and stores it inside of g
@@ -32,6 +33,7 @@ def close_connection(exception):
     db = getattr(g, '_database', None) 
     if db is not None: #closes connection if there is still one active
         db.close()
+
 
 def query_db(query, args=(), one=False): 
     cur = get_db().execute(query, args)
@@ -119,6 +121,7 @@ def questions():
     cursor.execute(sql)
     results = cursor.fetchall()
     return render_template("questions.html", results=results)
+
 
 @app.route('/rough')
 def rough():
@@ -221,6 +224,7 @@ def debug(id):
     return render_template("debug.html", correct_answer = correct_answer, correct = correct, form = form)
 
 
+
 @app.route("/question/<int:id>", methods = ['GET', 'POST'])
 @login_required
 def question(id):
@@ -272,8 +276,6 @@ def question(id):
                 cursor.execute( "INSERT INTO UserProgress (Question_ID, User_ID, Progress) VALUES (?,?,?)", current_tuple)
                 db.commit()
                 display = "correct"
-                    
-
         else:
             display = 'incorrect'
             print(display)
@@ -301,6 +303,10 @@ def question(id):
     return render_template("question.html", question=results, form = form, display = display, solution = solution)
 
 
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
 
 
 if __name__ == "__main__":
