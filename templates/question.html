@@ -7,7 +7,7 @@
     <img src="{{ url_for('static', filename=question[1]) }}" alt="question[7]">
     <div class = "info">
       <h2>Source: <span>{{ question[3] }}</span></h2>
-      <p class="badge">Type: {{ question[4] }}</p>
+      <a class="badge" href="{{ url_for('type', id=question[5]) }}"" >Type: {{ question[4] }}</a>
       <h3>Description</h3>
       <p class="description">{{ question[2] }}</p>
     </div> 
@@ -20,6 +20,7 @@
     {{ form.answer() }}
 
     {{ form.submit() }}
+    <p class="status-msg">{{ display }}</p>
 </form>
 
 {% if solution %}
@@ -28,7 +29,7 @@
         <div class="image-card">
             <img src="{{ url_for('static', filename=solution) }}" alt="Solution Image">
         </div>
-        <p class="status-msg">{{ display }}</p>
+        
     </div>
 {% endif %}
 

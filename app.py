@@ -271,11 +271,11 @@ def question(id):
                 else:
                     cursor.execute( "INSERT INTO UserProgress (Question_ID, User_ID, Progress) VALUES (?,?,?)", current_tuple)
                     db.commit()
-                    display = "correct"
+                    display = "correct, scroll down for my solution :)"
             else:
                 cursor.execute( "INSERT INTO UserProgress (Question_ID, User_ID, Progress) VALUES (?,?,?)", current_tuple)
                 db.commit()
-                display = "correct"
+                display = "correct, scroll down for my solution :)"
         else:
             display = 'incorrect'
             print(display)
@@ -287,7 +287,8 @@ def question(id):
         Questions.Question,
         Questions.Description, 
         WhereFrom.Name, 
-        Types.Name 
+        Types.Name,
+        Types.Type_ID 
     FROM Questions
     JOIN WhereFrom ON Questions.Where_ID = WhereFrom.Where_ID
     JOIN Types ON Questions.Type_ID = Types.Type_ID
