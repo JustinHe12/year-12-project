@@ -29,10 +29,6 @@ img{
     gap: 3em;
 }
 
-.ex1,
-.ex1:visited {
-    color: black;
-}
 
 .ex1:hover,
 .ex1:active {
@@ -88,18 +84,20 @@ img{
     margin-bottom: 1rem;
 }
 
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
+
 
 ul {
   list-style-type: none;
   margin: 0;
-  padding: 0;
+  padding: 8px 24px; 
   overflow: hidden;
-  background-color: #333333;
+  background-color: #1e1e24; 
+  position: sticky;
+  top: 0;
+  display: flex; 
+  align-items: center;
+  gap: 8px; 
+  z-index: 1000;
 }
 
 ul li {
@@ -108,12 +106,17 @@ ul li {
 
 ul li a {
   display: block;
-  color: white;
+  color: #d1d5db;
   text-align: center;
-  padding: 14px 16px;
+  padding: 8px 16px;
   text-decoration: none;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 6px; 
+  transition: all 0.2s ease-in-out;
 }
 
 ul li a:hover {
-  background-color: #111111;
+  background-color: #111111; 
 }

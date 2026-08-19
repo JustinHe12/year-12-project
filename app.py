@@ -102,7 +102,7 @@ def home():
     return render_template("home.html")
 
 @app.route("/questions")
-@login_required
+
 #The page that displays all the questions after the user have logged in
 def questions():
     db = get_db()
