@@ -1,4 +1,4 @@
-body,h1,h2,h3,h4,h5,h6 {font-family: Sofia, sans-serif }
+body,h2,h3,h4,h5,h6 {font-family: Sofia, sans-serif }
 
 .three-column{
     display: grid;
@@ -6,7 +6,13 @@ body,h1,h2,h3,h4,h5,h6 {font-family: Sofia, sans-serif }
     gap: 2em;
 }
 
-body,h1,h2,h3,h4,h5,h6 {font-family: Sofia, sans-serif }
+h1 {
+  font-family: 'Inter', sans-serif;
+  font-size: 2.25rem; 
+  font-weight: 700;
+  letter-spacing: -0.025em; 
+  margin-bottom: 1rem;
+}
 
 .three-column > * {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;

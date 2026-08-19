@@ -304,6 +304,28 @@ def question(id):
 
 
 
+@app.route("/types/<int:id>")
+def type(id):
+    sql = """
+        SELECT 
+            Questions.Question_ID, 
+            Questions.Question,
+            Questions.Description, 
+            WhereFrom.Name, 
+            Types.Name 
+        FROM Questions
+        JOIN WhereFrom ON Questions.Where_ID = WhereFrom.Where_ID
+        JOIN Types ON Questions.Type_ID = Types.Type_ID
+        WHERE Types.Type_ID = ?"""
+    results = query_db(sql, (id,), one=False)
+    if results:
+        result = results[0]
+        return render_template("type.html", results=results, result = result)
+    else:
+        return "No results found", 404
+    
+
+
 @app.route("/about")
 def about():
     return render_template("about.html")
