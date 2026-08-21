@@ -62,10 +62,7 @@ class User(UserMixin):
 @login_manager.user_loader
 # Retrieves the logged-in user from the database using their ID
 def load_user(user_id):
-    db = get_db()
-    cursor = db.execute("SELECT * FROM Users WHERE id = ?", (int(user_id),))
-    row = cursor.fetchone()
-    
+    row = query_db("SELECT * FROM Users WHERE id = ?", (int(user_id),), one=True)
     if row:
         return User(id=row[0], username=row[1], password=row[2])
     return None
@@ -112,8 +109,7 @@ def home():
 @app.route("/questions")
 #The page that displays all the questions after the user have logged in
 def questions():
-    db = get_db()
-    cursor = db.cursor()
+
     sql = """
     SELECT 
     Questions.Question_ID, 
@@ -125,8 +121,7 @@ def questions():
     JOIN WhereFrom ON Questions.Where_ID = WhereFrom.Where_ID
     JOIN Types ON Questions.Type_ID = Types.Type_ID;
     """
-    cursor.execute(sql)
-    results = cursor.fetchall()
+    results = query_db(sql, (), one = False)
     return render_template("questions.html", results=results)
 
 
@@ -136,10 +131,7 @@ def questions():
 def login():
     form = LoginForm() #the form for the user to log into their account
     if form.validate_on_submit():
-        db = get_db()
-        cursor = db.cursor()
-        cursor.execute("SELECT * FROM Users WHERE username = ?", (form.username.data, ))
-        row = cursor.fetchone()
+        row =query_db("SELECT * FROM Users WHERE username = ?", (form.username.data, ), one = True)
         if row: #Checks if the username and password that the user put in the form matches an existing user in the database
             user = User(id = row[0], username = row[1], password = row[2])
             if bycrypt.check_password_hash(user.password, form.password.data): # Securely checking the entered password against the stored hashed password using Bcrypt
@@ -164,14 +156,8 @@ def logout():
 @login_required
 def dashboard():
     #The initiall user_score is 0
-    user_score = 0
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM UserProgress WHERE user_id = ?", (int(current_user.id),))
-    rows = cursor.fetchall() 
-    if rows: 
-        for item in rows:
-            user_score = user_score + 5 #Adds 5 points for every question the user have solved
+    rows = query_db("SELECT * FROM UserProgress WHERE user_id = ?",(int(current_user.id), ),one = False)
+    user_score = 5*len(rows)
     return render_template("dashboard.html", user_score = user_score)
 
 
@@ -258,7 +244,6 @@ def question(id):
             cursor = db.cursor()
             cursor.execute("SELECT * FROM UserProgress WHERE user_id = ?", (int(current_user_id),))
             rows = cursor.fetchall() #gets the rows where the user id matches the current user's id
-            solved = False
             current_tuple = (id, current_user_id, 1)  #The tuple including the current user id, question id, and completion
             if rows: #Checks through all of the questions that the user have solved
                 print(rows) 
@@ -268,17 +253,15 @@ def question(id):
                     print(f"current_tuple {current_tuple}")
                     print(current_tuple)
                     if item == current_tuple: #if the user have already solved the question (current tuple matches one of the exsiting tuples)
-                        solved = True   
-                if solved == True: 
-                    display = "You have already answered this question" 
-                else: #if the user have not already solved the question (no row in user progress matches current tuple)
-                    cursor.execute( "INSERT INTO UserProgress (Question_ID, User_ID, Progress) VALUES (?,?,?)", current_tuple) #Then adds this row to current tuple
+                        display = "You have already answered this question" 
+                    else: #if the user have not already solved the question (no row in user progress matches current tuple)
+                        cursor.execute( "INSERT INTO UserProgress (Question_ID, User_ID, Progress) VALUES (?,?,?)", current_tuple) #Then adds this row to current tuple
+                        db.commit()
+                        display = "correct, scroll down for my solution :)" #informs the user that their answer is correct
+                else: #if there isnt a row in user that have the user's user_id (The user have not solved any questions yet)
+                    cursor.execute( "INSERT INTO UserProgress (Question_ID, User_ID, Progress) VALUES (?,?,?)", current_tuple) #Add this row to the user_progress tbale
                     db.commit()
-                    display = "correct, scroll down for my solution :)" #informs the user that their answer is correct
-            else: #if there isnt a row in user that have the user's user_id (The user have not solved any questions yet)
-                cursor.execute( "INSERT INTO UserProgress (Question_ID, User_ID, Progress) VALUES (?,?,?)", current_tuple) #Add this row to the user_progress tbale
-                db.commit()
-                display = "correct, scroll down for my solution :)" #informs the user that their answer is right
+                    display = "correct, scroll down for my solution :)" #informs the user that their answer is right
         else: #if the user's answer dosent match the correct answer
             display = 'incorrect' #Then it tells the user that their answer is wrong
             print(display)
