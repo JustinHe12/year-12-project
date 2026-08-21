@@ -310,7 +310,7 @@ def type(id):
         result = results[0]
         return render_template("type.html", results=results, result = result)
     else: #if there isnt then returns 404
-        return "No results found", 404
+        return "No Types with this id is found, Currently the ids are 1 for calculus, 2 for geometry, 3 for algebra, 4 for counting, and 5 for number theory ", 404
     
 
 
