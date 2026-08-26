@@ -220,6 +220,7 @@ def debug(id):
 #The page that displays each individual question
 def question(Id):
     print("Method:", request.method)
+    solved = False
     display = ''
     solution = ''
     form = AnswerForm()
@@ -285,7 +286,7 @@ def question(Id):
     """
     
     # Pass the id in a tuple to prevent SQL Injection
-    results = query_db(sql, (d,), one=True) #grabs all the relevant information about the question
+    results = query_db(sql, (Id,), one=True) #grabs all the relevant information about the question
     
     if results is None: # if there are questions with this id
         return "Question not found", 404 #tells the user that there is not a question with a matching id
