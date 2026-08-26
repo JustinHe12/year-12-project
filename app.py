@@ -1,4 +1,4 @@
-from flask import Flask, g, render_template, url_for, redirect, request
+from flask import Flask, g, render_template, url_for, redirect, request 
 import sqlite3
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
@@ -23,8 +23,11 @@ login_manager.init_app(app)
 login_manager.login_view = "login"
 
 
+
 def get_db():
-    db = getattr(g, '_database', None) #This line sets g._database to none if it dosen't already exist
+
+    #This line sets g._database to none if it dosen't already exist
+    db = getattr(g, '_database', None) 
     if db is None: #if db is none, it then creates a new connection and stores it inside of g
         db = g._database = sqlite3.connect(DATABASE)
     return db
@@ -186,7 +189,7 @@ def register():
 
 @app.route("/debug/<int:id>", methods = ['GET', 'POST'])
 #This is the debug page I made for testing
-#It displays some of the key element from the question page
+#It displays some of the key element from the question page (You can ignore this page)
 def debug(id):
     correct = ""
     form = AnswerForm()
@@ -195,8 +198,6 @@ def debug(id):
         """
     result = query_db(sql,(id,), one=True)
     correct_answer = result[0]
-    if correct_answer == None:
-        correct_answer = "none"
     print("Method:", request.method)
     print("Validate:", form.validate_on_submit())
     print("Errors:", form.errors)
@@ -214,10 +215,10 @@ def debug(id):
 
 
 
-@app.route("/question/<int:id>", methods = ['GET', 'POST'])
+@app.route("/question/<int:Id>", methods = ['GET', 'POST'])
 @login_required #The user needs to be logged in to access this page
 #The page that displays each individual question
-def question(id):
+def question(Id):
     print("Method:", request.method)
     display = ''
     solution = ''
@@ -227,7 +228,7 @@ def question(id):
         SELECT Answer FROM QUESTIONS WHERE QUESTION_ID = ?
         """
         #This is to prevent sql injection
-        result = query_db(sql,(id,), one=True)
+        result = query_db(sql,(Id,), one=True)
         if result: #Checks whether there is a answer for this in the database
             correct_answer = result[0] #if there is then the variable "correct_answer" is set to that result
         else:
@@ -236,7 +237,7 @@ def question(id):
             current_user_id = current_user.id #Gets the user's id
             #Gets the solution only after the right answer is submitted
             sql = "SELECT Questions.Solution FROM Questions WHERE Questions.Question_ID = ?"
-            solution = query_db(sql, (id,), one=True)
+            solution = query_db(sql, (Id,), one=True)
             if solution:
                 solution = solution[0]
 
@@ -244,7 +245,7 @@ def question(id):
             cursor = db.cursor()
             cursor.execute("SELECT * FROM UserProgress WHERE user_id = ?", (int(current_user_id),))
             rows = cursor.fetchall() #gets the rows where the user id matches the current user's id
-            current_tuple = (id, current_user_id, 1)  #The tuple including the current user id, question id, and completion
+            current_tuple = (Id, current_user_id, 1)  #The tuple including the current user id, question id, and completion
             if rows: #Checks through all of the questions that the user have solved
                 print(rows) 
                 rows = list(rows)
@@ -253,15 +254,17 @@ def question(id):
                     print(f"current_tuple {current_tuple}")
                     print(current_tuple)
                     if item == current_tuple: #if the user have already solved the question (current tuple matches one of the exsiting tuples)
-                        display = "You have already answered this question" 
-                    else: #if the user have not already solved the question (no row in user progress matches current tuple)
-                        cursor.execute( "INSERT INTO UserProgress (Question_ID, User_ID, Progress) VALUES (?,?,?)", current_tuple) #Then adds this row to current tuple
-                        db.commit()
-                        display = "correct, scroll down for my solution :)" #informs the user that their answer is correct
-                else: #if there isnt a row in user that have the user's user_id (The user have not solved any questions yet)
-                    cursor.execute( "INSERT INTO UserProgress (Question_ID, User_ID, Progress) VALUES (?,?,?)", current_tuple) #Add this row to the user_progress tbale
+                        solved = True
+                if solved is True:
+                    display = "You have already answered this question" 
+                else: #if the user have not already solved the question (no row in user progress matches current tuple)
+                    cursor.execute( "INSERT INTO UserProgress (Question_ID, User_ID, Progress) VALUES (?,?,?)", current_tuple) #Then adds this row to current tuple
                     db.commit()
-                    display = "correct, scroll down for my solution :)" #informs the user that their answer is right
+                    display = "correct, scroll down for my solution :)" #informs the user that their answer is correct
+            else: #if there isnt a row in user that have the user's user_id (The user have not solved any questions yet)
+                cursor.execute( "INSERT INTO UserProgress (Question_ID, User_ID, Progress) VALUES (?,?,?)", current_tuple) #Add this row to the user_progress tbale
+                db.commit()
+                display = "correct, scroll down for my solution :)" #informs the user that their answer is right
         else: #if the user's answer dosent match the correct answer
             display = 'incorrect' #Then it tells the user that their answer is wrong
             print(display)
@@ -282,7 +285,7 @@ def question(id):
     """
     
     # Pass the id in a tuple to prevent SQL Injection
-    results = query_db(sql, (id,), one=True) #grabs all the relevant information about the question
+    results = query_db(sql, (d,), one=True) #grabs all the relevant information about the question
     
     if results is None: # if there are questions with this id
         return "Question not found", 404 #tells the user that there is not a question with a matching id
@@ -291,9 +294,10 @@ def question(id):
 
 
 
-@app.route("/types/<int:id>")
+@app.route("/types/<int:Id>")
 #The page that displays only the questions of a certain type
-def type(id):
+def Type(Id):
+
     sql = """
         SELECT 
             Questions.Question_ID, 
@@ -305,7 +309,7 @@ def type(id):
         JOIN WhereFrom ON Questions.Where_ID = WhereFrom.Where_ID
         JOIN Types ON Questions.Type_ID = Types.Type_ID
         WHERE Types.Type_ID = ?"""
-    results = query_db(sql, (id,), one=False) 
+    results = query_db(sql, (Id,), one=False) 
     if results: #Checks if there is a type with this id
         result = results[0]
         return render_template("type.html", results=results, result = result)
