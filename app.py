@@ -56,9 +56,7 @@ def close_connection(exception):
 
 def query_db(query, args=(), one=False):
     """
-    query: SQL command string to execute
-    args: Tuple of values to pass into query parameters
-    one: if True, returns only the first result instead of a list
+    Executes a SQL query with optional arguments, it returns either one row or a list of rows
     """
     cur = get_db().execute(query, args)
     rv = cur.fetchall()
@@ -135,7 +133,6 @@ def home():
 
 
 @app.route("/questions")
-#The page that displays all the questions after the user have logged in
 def questions():
     """Renders the page that displays all the questions"""
     sql = """
@@ -150,6 +147,8 @@ def questions():
     JOIN Types ON Questions.Type_ID = Types.Type_ID;
     """
     results = query_db(sql, (), one = False)
+    #This takes the sql and grabs the relevant information from the database
+    #one = false means multiple rows are being grabbed
     return render_template("questions.html", results=results)
 
 
@@ -227,21 +226,23 @@ def register():
 #It displays some of the key element from the question page (You can ignore this page)
 def debug(id_):
     """This is respobsible for displaying the debug page"""
-    correct = ""
+    correct = ""#The page displays the value of correct which is initially blank
     form = AnswerForm()
     sql = """
         SELECT Answer FROM QUESTIONS WHERE QUESTION_ID = ?
         """
     result = query_db(sql,(id_,), one=True)
+    #Sets the correct answer to that in the database
     correct_answer = result[0]
-    print("Method:", request.method)
-    print("Validate:", form.validate_on_submit())
-    print("Errors:", form.errors)
+    #if the user submits a valid answer to the answer form
     if form.validate_on_submit():
         print("This form is working")
+        #if the answer matches that of the one in the databse
         if form.answer.data == correct_answer:
+            #Then displays "correct"
             correct = "correct"
         else:
+            #If its not correct then it displays "incorrect"
             correct = "incorrect"
     else:
         print("this is not working")
