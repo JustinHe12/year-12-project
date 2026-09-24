@@ -1,15 +1,15 @@
 {%extends "layout.html"%}
 {% block body %}
-    <h1>Fun questions</h1>
+    <h1 class="page-title">Fun questions</h1>
     <div class = "three-column">
 
       {% for questions in results %}
         <a href="{{ url_for('question', id_=questions[0]) }}">
-        <div class="w3-card-4">
+        <div class="w3-card-4 question-card">
             <h1 class="ex1"> Source: {{ questions[3] }}</h1> 
-            
-            <img src="{{ url_for('static', filename=questions[1]) }}" alt="questions[7]">
-                 
+            <div class="img-wrapper">
+                <img src="{{ url_for('static', filename=questions[1]) }}" alt="questions[7]">
+            </div>     
         </div>
     </a>
 {% endfor %}
