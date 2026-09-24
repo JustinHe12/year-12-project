@@ -250,3 +250,12 @@ ul li a:hover,
     gap: 16px;
     margin-bottom: 20px;
 }
+
+.dashboard-card h1 {
+    font-size: 1.75rem;
+}
+
+.dashboard-score {
+    font-size: 1.1rem;
+    margin: 12px 0 20px;
+}

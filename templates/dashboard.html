@@ -1,6 +1,12 @@
 {%extends "layout.html"%}
 {% block body %}
-    <h1>Hello, you are logged in</h1>
-    <a> User score : {{ user_score }}</a> <br>
-    <a class="ex1" href="{{url_for('logout')}}">Logout</a>
+    <div class="auth-wrapper">
+        <div class="auth-card dashboard-card">
+            <h1>Hello, you are logged in</h1>
+            <p class="dashboard-score">User score: <strong>{{ user_score }}</strong></p>
+            <div class="auth-actions">
+                <a class="ex1" href="{{url_for('logout')}}">Logout</a>
+            </div>
+        </div>
+    </div>
 {% endblock %}
